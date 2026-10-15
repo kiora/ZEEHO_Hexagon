@@ -1,0 +1,19 @@
+#!name=ZEEHO Hexagon for Shadowrocket
+#!desc=ZEEHO 骑行六项统计、轨迹急刹/压弯估算、历史缓存与统计显示
+#!author=Sillage
+
+[Script]
+# 捕获原生轨迹请求认证，不修改请求
+ZEEHO Hexagon Capture = type=http-request, pattern=^https://tapi\.zeehoev\.com/v1\.0/app/cfmotoserverapp/ridetrack_v2(?:\?.*)?$, requires-body=false, timeout=10, script-path=ZEEHO_Hexagon.js
+
+# 六项统计入口显示
+ZEEHO Hexagon Gate = type=http-response, pattern=^https://tapi\.zeehoev\.com/v1\.0/app/cfmotoserverapp/(?:vehicle/list|vehicleHomePageV2/[^?#]*)(?:\?.*)?$, requires-body=true, max-size=0, timeout=10, script-path=ZEEHO_Hexagon.js
+
+# 轨迹急刹/压弯估算、日/月缓存、骑行分析雷达
+ZEEHO Hexagon Ride = type=http-response, pattern=^https://tapi\.zeehoev\.com/v1\.0/app/cfmotoserverapp/(?:ridetrack_v2|myRideInfo|analyse/analyse)(?:\?.*)?$, requires-body=true, max-size=0, timeout=10, script-path=ZEEHO_Hexagon.js
+
+# 自动按月缓存，每 15 分钟执行一次
+ZEEHO Hexagon Auto Cache = type=cron, cronexp=*/15 * * * *, timeout=10, script-path=ZEEHO_Hexagon.js
+
+[MITM]
+hostname = %APPEND% tapi.zeehoev.com
